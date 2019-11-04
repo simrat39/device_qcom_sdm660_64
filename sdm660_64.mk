@@ -54,6 +54,7 @@ PRODUCT_COPY_FILES += \
   #Rank OMX SW codecs lower than OMX HW codecs
   PRODUCT_PROPERTY_OVERRIDES += debug.stagefright.omx_default_rank.sw-audio=1
   PRODUCT_PROPERTY_OVERRIDES += debug.stagefright.omx_default_rank=0
+  PRODUCT_PROPERTY_OVERRIDES += vendor.vidc.enc.disable.pq=true
 endif #TARGET_ENABLE_QC_AV_ENHANCEMENTS
 
 # video seccomp policy files
