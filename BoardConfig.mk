@@ -206,6 +206,7 @@ TARGET_PD_SERVICE_ENABLED := true
 
 #Enable HW based full disk encryption
 TARGET_HW_DISK_ENCRYPTION := true
+TARGET_HW_DISK_ENCRYPTION_PERF := true
 
 # Enable dex pre-opt to speed up initial boot
 ifeq ($(HOST_OS),linux)
