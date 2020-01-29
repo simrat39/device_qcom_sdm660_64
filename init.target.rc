@@ -118,10 +118,6 @@ on boot && property:persist.vendor.usb.controller.default=*
 on property:vendor.usb.controller=*
     setprop sys.usb.controller ${vendor.usb.controller}
 
-on charger
-    setprop vendor.usb.controller a800000.dwc3
-    setprop sys.usb.configfs 1
-
 #Peripheral manager
 service vendor.per_mgr /system/vendor/bin/pm-service
     class core
@@ -429,6 +425,7 @@ on charger
     load_system_props
     start qcom-post-boot
     start vendor.hvdcp_opti
+    setprop vendor.usb.controller a800000.dwc3
     setprop sys.usb.configfs 1
     start power_off_alarm
 
