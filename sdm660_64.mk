@@ -20,9 +20,9 @@ endif
 
 ifeq ($(strip $(TARGET_KERNEL_VERSION)),4.14)
     # Dynamic-partition enabled by default for new launch config
-    #BOARD_DYNAMIC_PARTITION_ENABLE ?= true
+    BOARD_DYNAMIC_PARTITION_ENABLE ?= true
     # First launch API level
-    #PRODUCT_SHIPPING_API_LEVEL := 29
+    PRODUCT_SHIPPING_API_LEVEL := 29
 else
     BOARD_DYNAMIC_PARTITION_ENABLE := false
     $(call inherit-product, build/make/target/product/product_launched_with_p.mk)
