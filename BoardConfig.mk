@@ -43,7 +43,8 @@ BOARD_USE_LEGACY_UI := true
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_BOOTIMAGE_PARTITION_SIZE := 0x04000000
 
-TARGET_KERNEL_APPEND_DTB := true
+#Disable appended dtb
+TARGET_KERNEL_APPEND_DTB := false
 
 ifeq ($(ENABLE_AB), true)
 #A/B related defines
