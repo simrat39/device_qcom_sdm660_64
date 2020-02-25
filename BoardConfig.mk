@@ -119,6 +119,79 @@ else
 endif
 ### Dynamic partition Handling
 
+ifeq ($(ENABLE_AB), true)
+#A/B related defines
+AB_OTA_UPDATER := true
+# Full A/B partiton update set
+# AB_OTA_PARTITIONS := xbl rpm tz hyp pmic modem abl boot keymaster cmnlib cmnlib64 system bluetooth
+# Subset A/B partitions for Android-only image update
+ifeq ($(ENABLE_VENDOR_IMAGE), true)
+  ifeq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
+    AB_OTA_PARTITIONS ?= boot system vendor product
+  else
+    AB_OTA_PARTITIONS ?= boot system vendor
+  endif
+else
+    AB_OTA_PARTITIONS ?= boot system
+endif
+else
+BOARD_CACHEIMAGE_PARTITION_SIZE := 268435456
+BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
+ifeq ($(BOARD_AVB_ENABLE), true)
+ BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
+ BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
+ BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
+ BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
+endif
+endif
+
+### Dynamic partition Handling
+ifneq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
+  ifeq ($(ENABLE_VENDOR_IMAGE), true)
+      BOARD_VENDORIMAGE_PARTITION_SIZE := 838860800
+  endif
+  BOARD_SYSTEMIMAGE_PARTITION_SIZE := 3221225472
+  BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+  ifeq ($(ENABLE_AB), true)
+      TARGET_NO_RECOVERY := true
+      BOARD_USES_RECOVERY_AS_BOOT := true
+  else
+      BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x04000000
+      ifeq ($(BOARD_KERNEL_SEPARATED_DTBO),true)
+        # Enable DTBO for recovery image
+        BOARD_INCLUDE_RECOVERY_DTBO := true
+      endif
+  endif
+else
+  #dtbo support
+  BOARD_DTBOIMG_PARTITION_SIZE := 0x0800000
+  BOARD_KERNEL_SEPARATED_DTBO := true
+
+  # Product partition support
+  TARGET_COPY_OUT_PRODUCT := product
+  BOARD_USES_PRODUCTIMAGE := true
+  BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+  # Define the Dynamic Partition sizes and groups.
+  ifeq ($(ENABLE_AB), true)
+    BOARD_SUPER_PARTITION_SIZE := 12884901888
+  else
+    BOARD_SUPER_PARTITION_SIZE := 5318967296
+  endif
+  ifeq ($(BOARD_KERNEL_SEPARATED_DTBO),true)
+    # Enable DTBO for recovery image
+    BOARD_INCLUDE_RECOVERY_DTBO := true
+  endif
+  BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
+  BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 5314772992
+  BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system product vendor
+  BOARD_EXT4_SHARE_DUP_BLOCKS := true
+  BOARD_RECOVERYIMAGE_PARTITION_SIZE := 67108864
+  # Metadata partition (applicable only for new launches)
+  BOARD_METADATAIMAGE_PARTITION_SIZE := 16777216
+  BOARD_USES_METADATA_PARTITION := true
+endif
+### Dynamic partition Handling
+
 ifeq ($(BOARD_KERNEL_SEPARATED_DTBO), true)
      # Set Header version for bootimage
      ifneq ($(strip $(TARGET_KERNEL_APPEND_DTB)),true)
@@ -210,6 +283,42 @@ BOARD_VENDOR_KERNEL_MODULES := \
     $(KERNEL_MODULES_OUT)/rdbg.ko \
     $(KERNEL_MODULES_OUT)/mpq-adapter.ko \
     $(KERNEL_MODULES_OUT)/mpq-dmx-hw-plugin.ko
+
+ifeq ($(TARGET_KERNEL_VERSION), 4.14)
+BOARD_VENDOR_KERNEL_MODULES += \
+    $(KERNEL_MODULES_OUT)/audio_apr.ko \
+    $(KERNEL_MODULES_OUT)/audio_wglink.ko \
+    $(KERNEL_MODULES_OUT)/audio_q6_pdr.ko \
+    $(KERNEL_MODULES_OUT)/audio_q6_notifier.ko \
+    $(KERNEL_MODULES_OUT)/audio_adsp_loader.ko \
+    $(KERNEL_MODULES_OUT)/audio_q6.ko \
+    $(KERNEL_MODULES_OUT)/audio_usf.ko \
+    $(KERNEL_MODULES_OUT)/audio_pinctrl_wcd.ko \
+    $(KERNEL_MODULES_OUT)/audio_pinctrl_lpi.ko \
+    $(KERNEL_MODULES_OUT)/audio_swr.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd_core.ko \
+    $(KERNEL_MODULES_OUT)/audio_swr_ctrl.ko \
+    $(KERNEL_MODULES_OUT)/audio_wsa881x.ko \
+    $(KERNEL_MODULES_OUT)/audio_platform.ko \
+    $(KERNEL_MODULES_OUT)/audio_cpe_lsm.ko \
+    $(KERNEL_MODULES_OUT)/audio_hdmi.ko \
+    $(KERNEL_MODULES_OUT)/audio_stub.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd9xxx.ko \
+    $(KERNEL_MODULES_OUT)/audio_mbhc.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd_spi.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd_cpe.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd9335.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd934x.ko \
+    $(KERNEL_MODULES_OUT)/audio_digital_cdc.ko \
+    $(KERNEL_MODULES_OUT)/audio_analog_cdc.ko \
+    $(KERNEL_MODULES_OUT)/audio_msm_sdw.ko \
+    $(KERNEL_MODULES_OUT)/audio_native.ko \
+    $(KERNEL_MODULES_OUT)/audio_machine_sdm660.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd934x.ko \
+    $(KERNEL_MODULES_OUT)/audio_mbhc.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd9xxx.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd_core.ko
+endif
 
 TARGET_USES_ION := true
 TARGET_USES_NEW_ION_API :=true
