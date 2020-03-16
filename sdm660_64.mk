@@ -110,6 +110,7 @@ PRODUCT_COPY_FILES += \
   PRODUCT_PROPERTY_OVERRIDES += debug.stagefright.omx_default_rank.sw-audio=1
   PRODUCT_PROPERTY_OVERRIDES += debug.stagefright.omx_default_rank=0
   PRODUCT_PROPERTY_OVERRIDES += vendor.vidc.enc.disable.pq=true
+  PRODUCT_PROPERTY_OVERRIDES += persist.vendor.camera.dual.isp.sync=0
 endif #TARGET_ENABLE_QC_AV_ENHANCEMENTS
 
 # video seccomp policy files
