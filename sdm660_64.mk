@@ -21,8 +21,13 @@ endif
 ifeq ($(strip $(TARGET_KERNEL_VERSION)),4.14)
     # Dynamic-partition enabled by default for new launch config
     BOARD_DYNAMIC_PARTITION_ENABLE ?= true
+
+    SHIPPING_API_LEVEL ?= 29
+
+    ifeq ($(SHIPPING_API_LEVEL),29)
     # First launch API level
     PRODUCT_SHIPPING_API_LEVEL := 29
+    endif
 else
     BOARD_DYNAMIC_PARTITION_ENABLE := false
     $(call inherit-product, build/make/target/product/product_launched_with_p.mk)
@@ -195,7 +200,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     vendor.qcom.bluetooth.soc=cherokee
 
 DEVICE_MANIFEST_FILE := device/qcom/sdm660_64/manifest.xml
-ifeq ($(strip $(PRODUCT_SHIPPING_API_LEVEL)),29)
+ifeq ($(SHIPPING_API_LEVEL),29)
   DEVICE_MANIFEST_FILE += device/qcom/sdm660_64/manifest_target_level_4.xml
 else
   DEVICE_MANIFEST_FILE += device/qcom/sdm660_64/manifest_target_level_3.xml
@@ -258,9 +263,14 @@ PRODUCT_PACKAGES += \
     vendor.display.color@1.0-impl
 
 # Vibrator
+ifeq ($(strip $(TARGET_KERNEL_VERSION)),4.14)
+PRODUCT_PACKAGES += \
+    vendor.qti.hardware.vibrator@1.2-service
+else
 PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-impl \
-    android.hardware.vibrator@1.0-service \
+    android.hardware.vibrator@1.0-service
+endif
 
 # Camera configuration file. Shared by passthrough/binderized camera HAL
 PRODUCT_PACKAGES += camera.device@3.2-impl
