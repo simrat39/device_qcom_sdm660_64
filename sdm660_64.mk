@@ -140,6 +140,9 @@ PRODUCT_PACKAGES += \
     init.target_ota.rc
 endif
 
+# RRO configuration
+TARGET_USES_RRO := true
+
 # Power
 PRODUCT_PACKAGES += \
     android.hardware.power@1.0-service \
